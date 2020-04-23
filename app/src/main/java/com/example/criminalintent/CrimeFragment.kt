@@ -16,7 +16,7 @@ import android.widget.EditText
  * A simple [Fragment] subclass.
  */
 class CrimeFragment : Fragment() {
-    private lateinit var crime:Crime
+    private lateinit var crime: Crime
     private lateinit var titleField: EditText
     private lateinit var dateButton: Button
     private lateinit var solvedCheckBox: CheckBox
@@ -27,47 +27,43 @@ class CrimeFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_crime, container, false)
+        val view= inflater.inflate(R.layout.fragment_crime, container, false)
 
         titleField = view.findViewById(R.id.crime_title) as EditText
         dateButton = view.findViewById(R.id.crime_date) as Button
-
         solvedCheckBox = view.findViewById(R.id.crime_solved) as CheckBox
 
         dateButton.apply {
             text = crime.date.toString()
             isEnabled = false
         }
-        return  view
-    }
 
+        return view
+    }
     override fun onStart() {
         super.onStart()
         val titleWatcher = object : TextWatcher {
             override fun beforeTextChanged(
-                p0: CharSequence?
-                , p1: Int
-                , p2: Int
-                , p3: Int
-            ) {
-
+                sequence: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int) {
             }
 
             override fun onTextChanged(
-                p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                crime.title = p0.toString()
-
+                sequence:CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int) {
+                crime.title = sequence.toString()
             }
 
-            override fun afterTextChanged(p0: Editable?) {
-
-
+            override fun afterTextChanged(s: Editable?) {
             }
-
         }
 
         titleField.addTextChangedListener(titleWatcher)
@@ -77,6 +73,5 @@ class CrimeFragment : Fragment() {
                 crime.isSolved = isChecked
             }
         }
-
     }
 }
