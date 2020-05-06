@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,10 +29,10 @@ class CrimeListFragment : Fragment(){
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG,"Total Crimes : ${crimeListViewModel.crimes.size}")
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        Log.d(TAG,"Total Crimes : ${crimeListViewModel.crimes.size}")
+//    }
 
     companion object{
         fun newInstance(): CrimeListFragment{
@@ -47,16 +48,37 @@ class CrimeListFragment : Fragment(){
         val view = inflater.inflate(R.layout.fragment_crime_list,container,false)
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
+        crimeRecyclerView.adapter = adapter
 
-        updateUI()
+//        updateUI()
         return view
 
     }
-    private fun updateUI(){
-        val crimes = crimeListViewModel.crimes
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        crimeListViewModel.crimeListLiveData.observe(
+            viewLifecycleOwner,
+            Observer { crimes ->
+                crimes?.let {
+                    Log.i(TAG, "Got crimes ${crimes.size}")
+                    updateUI(crimes)
+                }
+
+            }
+        )
+    }
+
+    private fun updateUI(crimes: List<Crime>){
         adapter = CrimeAdapter(crimes)
         crimeRecyclerView.adapter = adapter
     }
+
+//    private fun updateUI(){
+//        val crimes = crimeListViewModel.crimes
+//        adapter = CrimeAdapter(crimes)
+//        crimeRecyclerView.adapter = adapter
+//    }
     private inner class CrimeHolder(view: View):RecyclerView.ViewHolder(view),View.OnClickListener{
         private lateinit var crime: Crime
 
