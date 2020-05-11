@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -23,8 +24,15 @@ import androidx.recyclerview.widget.RecyclerView
 private const val TAG = "CrimeListFragment"
 class CrimeListFragment : Fragment(){
     private lateinit var crimeRecyclerView: RecyclerView
-    private var adapter : CrimeAdapter? = null
+//    private var adapter : CrimeAdapter? = null
 
+
+    interface Callbacks{
+        fun onCrimeSelected(crimeId: UUID)
+    }
+
+    private var callbacks: Callbacks? = null
+    private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
     private val crimeListViewModel : CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
@@ -69,6 +77,11 @@ class CrimeListFragment : Fragment(){
         )
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
     private fun updateUI(crimes: List<Crime>){
         adapter = CrimeAdapter(crimes)
         crimeRecyclerView.adapter = adapter
@@ -101,8 +114,9 @@ class CrimeListFragment : Fragment(){
         }
 
         override fun onClick(v: View) {
-            Toast.makeText(context, "${crime.title}pressed!",Toast.LENGTH_SHORT)
-                .show()
+//            Toast.makeText(context, "${crime.title}pressed!",Toast.LENGTH_SHORT)
+//                .show()
+            callbacks?.onCrimeSelected(crime.id)
         }
 
     }
@@ -123,5 +137,7 @@ class CrimeListFragment : Fragment(){
             holder.bind(crime)
         }
     }
+
+
 }
 
